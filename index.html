@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" imgContent="width=device-width,initial-scale=1.0">    <style>
+      html,body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+	  #imgContent {
+		display: none;
+		width: 100%;
+		height: 100%;
+	  }
+	  img {
+		width: 100%;
+		height: 100%;
+	  }
+	  #img2 {
+		display: none;
+	  }
+	  #coffee {
+		display:none;
+		text-align: center;
+	  }
+	  #cameraContent {
+		width: 100%;
+		height: 100%;
+		background: url('./img/bg.png') 50% 100%;
+	  }
+	  #my_camera {
+		min-height: 100%;
+	  }
+	  #wrapper {
+		width: 100%;
+		height: 40px;
+		display: none;
+	  }
+	  #progressbar {
+		width: 100%;
+		height: 10px;
+		border-bottom: 1px solid #000000;
+	  }
+	  #fill {
+		height:10px;
+		animation: move 3s;
+		background-color: #6caf00;
+		color: #ffffff;
+	  }
+	  @keyframes move {
+		0% {
+			width: 0;
+		}
+		100% {
+			width: 100%;
+		}
+	  }
+    </style>
+  </head>
+  <body>
+	<!-- 调用摄像头功能模拟扫码 -->
+	<div id="cameraContent">
+		<video id="v" style="width: 640px;height: 480px;"></video>
+	</div>
+	<!-- 模拟进度条 -->
+	<div id="wrapper">
+        <!-- 进度条容器 -->
+        <div id="progressbar">
+            <!-- 进度条 -->
+            <div id="fill"></div>
+        </div>
+    </div>
+	<!-- 模拟验证 -->
+    <div id="imgContent">
+		<img id="img1" src="./img/in.png" />
+		<img id="img2" src="./img/out.png" />
+	</div>
+	<!-- 模拟验证 -->
+	<div id="coffee">
+		<h2>如果对你有帮助的话</h2>
+		<h2>可以请作者喝杯咖啡~</h2>
+		<img src="./img/coffee.png" />
+	</div>
+  </body>
+  <script>
+	// 调用摄像机
+	!(function () {
+		// 老的浏览器可能根本没有实现 mediaDevices，所以我们可以先设置一个空的对象
+		if (navigator.mediaDevices === undefined) {
+			navigator.mediaDevices = {};
+		}
+		if (navigator.mediaDevices.getUserMedia === undefined) {
+			navigator.mediaDevices.getUserMedia = function (constraints) {
+				// 首先，如果有getUserMedia的话，就获得它
+				var getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+
+				// 一些浏览器根本没实现它 - 那么就返回一个error到promise的reject来保持一个统一的接口
+				if (!getUserMedia) {
+					return Promise.reject(new Error('getUserMedia is not implemented in this browser'));
+				}
+
+				// 否则，为老的navigator.getUserMedia方法包裹一个Promise
+				return new Promise(function (resolve, reject) {
+					getUserMedia.call(navigator, constraints, resolve, reject);
+				});
+			}
+		}
+		const constraints = {
+			//video: true,
+			video: { facingMode: "environment" } ,
+			audio: false
+		};
+		let videoPlaying = false;
+		let v = document.getElementById('v');
+		let promise = navigator.mediaDevices.getUserMedia(constraints);
+		promise.then(stream => {
+			// 旧的浏览器可能没有srcObject
+			if ("srcObject" in v) {
+				v.srcObject = stream;
+			} else {
+				// 防止再新的浏览器里使用它，应为它已经不再支持了
+				v.src = window.URL.createObjectURL(stream);
+			}
+			v.onloadedmetadata = function (e) {
+				v.play();
+				videoPlaying = true;
+			};
+		}).catch(err => {
+			console.error(err.name + ": " + err.message);
+		})
+	})();
+	
+	
+	let sty = document.getElementsByTagName('video')[0].style;
+	sty.width = '100%';
+	sty.height = '100%';
+	// 延时函数
+	setTimeout(() => {
+		cameraContent.style.display = "none";
+		wrapper.style.display = "block";
+		setTimeout(() => {
+			wrapper.style.display = "none";
+			imgContent.style.display = "block";
+		}, 3000)
+	}, 5000)
+	// 点击事件
+	img1.onclick = function () {
+		img1.style.display = "none";
+		img2.style.display = "block";
+	}
+	img2.onclick = function () {
+		imgContent.style.display = "none";
+		coffee.style.display = "block";
+	}
+  </script>
+ </html>
