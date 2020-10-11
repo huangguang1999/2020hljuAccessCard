@@ -78,11 +78,11 @@
 		<img id="img2" src="./img/out.png" />
 	</div>
 	<!-- 模拟验证 -->
-	<div id="coffee">
-		<h2>如果对你有帮助的话</h2>
-		<h2>可以请作者喝杯咖啡~</h2>
-		<img src="./img/coffee.png" />
-	</div>
+<!--	<div id="coffee">-->
+<!--		<h2>如果对你有帮助的话</h2>-->
+<!--		<h2>可以请作者喝杯咖啡~</h2>-->
+<!--		<img src="./img/coffee.png" />-->
+<!--	</div>-->
   </body>
   <script>
 	// 调用摄像机
@@ -131,8 +131,8 @@
 			console.error(err.name + ": " + err.message);
 		})
 	})();
-	
-	
+
+
 	let sty = document.getElementsByTagName('video')[0].style;
 	sty.width = '100%';
 	sty.height = '100%';
@@ -150,9 +150,9 @@
 		img1.style.display = "none";
 		img2.style.display = "block";
 	}
-	img2.onclick = function () {
-		imgContent.style.display = "none";
-		coffee.style.display = "block";
-	}
+	// img2.onclick = function () {
+	// 	imgContent.style.display = "none";
+	// 	coffee.style.display = "block";
+	// }
   </script>
  </html>
